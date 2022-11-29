@@ -4,25 +4,53 @@
 import PackageDescription
 
 let package = Package(
-    name: "UtilityFeatures",
-    products: [
-        // Products define the executables and libraries a package produces, and make them visible to other packages.
-        .library(
-            name: "UtilityFeatures",
-            targets: ["UtilityFeatures"]),
-    ],
-    dependencies: [
-        // Dependencies declare other packages that this package depends on.
-        // .package(url: /* package url */, from: "1.0.0"),
-    ],
-    targets: [
-        // Targets are the basic building blocks of a package. A target can define a module or a test suite.
-        // Targets can depend on other targets in this package, and on products in packages this package depends on.
-        .target(
-            name: "UtilityFeatures",
-            dependencies: []),
-        .testTarget(
-            name: "UtilityFeaturesTests",
-            dependencies: ["UtilityFeatures"]),
-    ]
+  name: "UtilityFeatures",
+  platforms: [
+    .iOS(.v15),
+    .macOS(.v12),
+  ],
+  products: [
+    .library(name: "FrequencyFormatter", targets: ["FrequencyFormatter"]),
+    .library(name: "OpusEncoder", targets: ["OpusEncoder"]),
+    .library(name: "OpusPlayer", targets: ["OpusPlayer"]),
+    .library(name: "RingBuffer", targets: ["RingBuffer"]),
+    .library(name: "SecureStorage", targets: ["SecureStorage"]),
+    .library(name: "XCGWrapper", targets: ["XCGWrapper"]),
+  ],
+  dependencies: [
+    .package(url: "https://github.com/K3TZR/SharedFeatures.git", from: "1.1.1"),
+    .package(url: "https://github.com/DaveWoodCom/XCGLogger.git", from: "7.0.1"),
+  ],
+  targets: [
+    // --------------- Modules ---------------
+    // FrequencyFormatter
+    .target( name: "FrequencyFormatter", dependencies: []),
+
+    // OpusEncoder
+    .target( name: "OpusEncoder", dependencies: [
+      "RingBuffer",
+      "XCGWrapper",
+      .product(name: "Shared", package: "SharedFeatures"),
+    ]),
+    
+    // OpusPlayer
+    .target( name: "OpusPlayer", dependencies: [
+      "RingBuffer",
+      "XCGWrapper",
+      .product(name: "Shared", package: "SharedFeatures"),
+    ]),
+    
+    // RingBuffer
+    .target( name: "RingBuffer", dependencies: []),
+    
+    // SecureStorage
+    .target( name: "SecureStorage", dependencies: []),
+
+    // XCGWrapper
+    .target( name: "XCGWrapper", dependencies: [
+      .product(name: "Shared", package: "SharedFeatures"),
+      .product(name: "XCGLogger", package: "XCGLogger"),
+      .product(name: "ObjcExceptionBridging", package: "XCGLogger"),
+    ]),
+  ]
 )

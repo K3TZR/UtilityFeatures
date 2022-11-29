@@ -1,0 +1,23 @@
+{
+  "pins" : [
+    {
+      "identity" : "sharedfeatures",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/K3TZR/SharedFeatures.git",
+      "state" : {
+        "revision" : "ea0cc07a299521d409bb14a7f50bcfd275ae0d13",
+        "version" : "1.1.1"
+      }
+    },
+    {
+      "identity" : "xcglogger",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/DaveWoodCom/XCGLogger.git",
+      "state" : {
+        "revision" : "a9c4667b247928a29bdd41be2ec2c8d304215a54",
+        "version" : "7.0.1"
+      }
+    }
+  ],
+  "version" : 2
+}
