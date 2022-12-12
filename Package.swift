@@ -18,8 +18,9 @@ let package = Package(
     .library(name: "XCGWrapper", targets: ["XCGWrapper"]),
   ],
   dependencies: [
-    .package(url: "https://github.com/K3TZR/SharedFeatures.git", from: "1.1.1"),
+    .package(url: "https://github.com/K3TZR/SharedFeatures.git", from: "1.3.1"),
     .package(url: "https://github.com/DaveWoodCom/XCGLogger.git", from: "7.0.1"),
+    .package(url: "https://github.com/pointfreeco/swift-composable-architecture", from: "0.42.0"),
   ],
   targets: [
     // --------------- Modules ---------------
@@ -37,6 +38,7 @@ let package = Package(
     .target( name: "OpusPlayer", dependencies: [
       "RingBuffer",
       "XCGWrapper",
+      .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
       .product(name: "Shared", package: "SharedFeatures"),
     ]),
     
@@ -48,9 +50,9 @@ let package = Package(
 
     // XCGWrapper
     .target( name: "XCGWrapper", dependencies: [
+      .product(name: "ObjcExceptionBridging", package: "XCGLogger"),
       .product(name: "Shared", package: "SharedFeatures"),
       .product(name: "XCGLogger", package: "XCGLogger"),
-      .product(name: "ObjcExceptionBridging", package: "XCGLogger"),
     ]),
   ]
 )

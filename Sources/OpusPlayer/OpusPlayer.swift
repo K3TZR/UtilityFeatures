@@ -9,6 +9,7 @@
 import Accelerate
 import AudioToolbox
 import AVFoundation
+import ComposableArchitecture
 import Foundation
 
 import RingBuffer
@@ -25,6 +26,22 @@ import XCGWrapper
 //                  24_000             24_000             24_000
 //                  2 channels         2 channels         2 channels
 //                                     interleaved        interleaved
+
+// ----------------------------------------------------------------------------
+// MARK: - Dependency decalarations
+
+extension OpusPlayer: DependencyKey {
+  public static let liveValue = OpusPlayer()
+  public static let previewValue = OpusPlayer()
+  public static let testValue = OpusPlayer()
+}
+
+extension DependencyValues {
+  public var opusPlayer: OpusPlayer {
+    get { self[OpusPlayer.self] }
+    set { self[OpusPlayer.self] = newValue }
+  }
+}
 
 public final class OpusPlayer: NSObject, StreamHandler {
   
