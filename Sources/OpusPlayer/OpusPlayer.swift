@@ -30,18 +30,16 @@ import XCGWrapper
 // ----------------------------------------------------------------------------
 // MARK: - Dependency decalarations
 
-extension OpusPlayer: DependencyKey {
-  public static let liveValue = OpusPlayer()
-  public static let previewValue = OpusPlayer()
-  public static let testValue = OpusPlayer()
-}
-
-extension DependencyValues {
-  public var opusPlayer: OpusPlayer {
-    get { self[OpusPlayer.self] }
-    set { self[OpusPlayer.self] = newValue }
-  }
-}
+//extension OpusPlayer: DependencyKey {
+//  public static var liveValue: OpusPlayer? = nil
+//}
+//
+//extension DependencyValues {
+//  public var opusPlayer: OpusPlayer? {
+//    get {self[OpusPlayer.self]}
+//    set {self[OpusPlayer.self] = newValue}
+//  }
+//}
 
 public final class OpusPlayer: NSObject, StreamHandler {
   
@@ -82,6 +80,11 @@ public final class OpusPlayer: NSObject, StreamHandler {
                                                              mReserved: 0)
   
   // ----------------------------------------------------------------------------
+  // MARK: - Punlic properties
+  
+  public var id: StreamId?
+
+  // ----------------------------------------------------------------------------
   // MARK: - Private properties
   
   private var _converter: AVAudioConverter?
@@ -103,22 +106,28 @@ public final class OpusPlayer: NSObject, StreamHandler {
   // ----------------------------------------------------------------------------
   // MARK: - Initialization
   
+//  public static var shared = OpusPlayer()
   public override init() {
     super.init()
     
-    setupConversion()
-    setupOutputUnit()
+//    setupConversion()
+//    setupOutputUnit()
   }
-  deinit {
-    guard let outputUnit = _outputUnit else { return }
-    AudioUnitUninitialize(outputUnit)
-    AudioComponentInstanceDispose(outputUnit)
-  }
+//  deinit {
+//    guard let outputUnit = _outputUnit else { return }
+//    AudioUnitUninitialize(outputUnit)
+//    AudioComponentInstanceDispose(outputUnit)
+//  }
   
   // ----------------------------------------------------------------------------
   // MARK: - Public methods
   
-  public func start() {
+  public func start(_ id: StreamId) {
+    self.id = id
+
+    setupConversion()
+    setupOutputUnit()
+
     guard let outputUnit = _outputUnit else { fatalError("Output unit is null") }
     TPCircularBufferClear(&_ringBuffer)
     
@@ -134,6 +143,9 @@ public final class OpusPlayer: NSObject, StreamHandler {
                          &input,
                          UInt32(MemoryLayout.size(ofValue: input)))
     guard AudioUnitInitialize(outputUnit) == noErr else { fatalError("Output unit not initialized") }
+    
+    guard AudioOutputUnitStart(_outputUnit!) == noErr else { fatalError("Output unit failed to start") }
+    _outputActive = true
   }
   
   public func stop() {
@@ -145,6 +157,10 @@ public final class OpusPlayer: NSObject, StreamHandler {
     
 //    let availableFrames = TPCircularBufferGetAvailableSpace(&_ringBuffer, &OpusPlayer.decoderOutputASBD)
 //    _log.logMessage("OpusPlayer stop: frames = \(availableFrames) ", .debug, #function, #file, #line)
+
+//    guard let outputUnit = _outputUnit else { return }
+    AudioUnitUninitialize(outputUnit)
+    AudioComponentInstanceDispose(outputUnit)
   }
   
   // ----------------------------------------------------------------------------
@@ -258,9 +274,9 @@ public final class OpusPlayer: NSObject, StreamHandler {
     TPCircularBufferCopyAudioBufferList(&_ringBuffer, &_outputBuffer.mutableAudioBufferList.pointee, nil, UInt32(OpusPlayer.frameCount), &OpusPlayer.decoderOutputASBD)
     
     // start playing
-    if _outputActive == false {
-      guard AudioOutputUnitStart(_outputUnit!) == noErr else { fatalError("Output unit failed to start") }
-      _outputActive = true
-    }
+//    if _outputActive == false {
+//      guard AudioOutputUnitStart(_outputUnit!) == noErr else { fatalError("Output unit failed to start") }
+//      _outputActive = true
+//    }
   }
 }
